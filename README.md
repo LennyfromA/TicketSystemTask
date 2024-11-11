@@ -1,66 +1,152 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Этот проект представляет собой систему управления заказами на билеты, написанную на PHP (Laravel). Система позволяет создавать заказы на билеты на мероприятия, отправлять их на бронирование через внешний API и получать подтверждение бронирования.
+## Требования
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- PHP >= 8.0
+- Composer
+- Laravel >= 9.x
+- MySQL
 
-## About Laravel
+## Установка
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. **Склонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/ваш-репозиторий.git
+   ```
+2. **Установите зависимости:**
+    ```bash
+    composer install
+    ```
+3.  **Настройте файл .env: Скопируйте .env.example в .env и настройте параметры для доступа к базе данных и внешнему API бронирования.**
+4.  Запустите миграции:
+    ```bash
+    php artisan migrate
+    ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+5. Запустите сервер:
+    ```bash
+   php artisan serve
+    ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    ### Контроллеры:
 
-## Learning Laravel
+- **OrderController**: Отвечает за создание заказа, его бронирование через API и подтверждение.
+    
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Модели:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Order**: Модель заказа.
+    
+- **Ticket**: Модель билета.
+    
+- **TicketType**: Модель типа билета (например, взрослый, детский).
+    
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Миграции:
 
-## Laravel Sponsors
+- **orders**: Таблица для хранения заказов.
+    
+- **tickets**: Таблица для хранения билетов, связанных с заказами.
+    
+- **ticket_types**: Таблица для хранения типов билетов.
+    
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## API Endpoints
 
-### Premium Partners
+### POST `/api/storeOrder`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Эндпоинт для создания заказа и его бронирования через внешний API.
 
-## Contributing
+#### Параметры запроса:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- `event_id` (integer) - ID мероприятия.
+    
+- `event_date` (datetime) - Дата и время мероприятия.
+    
+- `ticket_adult_price` (float) - Стоимость взрослого билета.
+    
+- `ticket_adult_quantity` (integer) - Количество взрослых билетов.
+    
+- `ticket_kid_price` (float) - Стоимость детского билета (необязательно).
+    
+- `ticket_kid_quantity` (integer) - Количество детских билетов (необязательно).
+    
+- `user_id` (integer) - ID пользователя, создавшего заказ.
+    
 
-## Code of Conduct
+#### Ответы:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **200 OK** - Заказ успешно одобрен.
+    
+- **400 Bad Request** - Ошибка бронирования или подтверждения.
+    
+- **500 Internal Server Error** - Ошибка сервера при бронировании.
+    
 
-## Security Vulnerabilities
+## Модели
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Order
 
-## License
+Модель `Order` представляет заказ на мероприятие. Связи:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `tickets()` - Связь с моделью `Ticket` (hasMany).
+    
+
+### Ticket
+
+Модель `Ticket` представляет билет в заказе. Связи:
+
+- `order()` - Связь с моделью `Order` (belongsTo).
+    
+- `ticketType()` - Связь с моделью `TicketType` (belongsTo).
+    
+
+### TicketType
+
+Модель `TicketType` представляет типы билетов (например, взрослый или детский). Связи:
+
+- `tickets()` - Связь с моделью `Ticket` (hasMany).
+    
+
+## Миграции
+
+### orders
+
+Таблица для хранения заказов.
+
+- `event_id` - ID мероприятия.
+    
+- `event_date` - Дата и время мероприятия.
+    
+- `ticket_adult_price` - Стоимость взрослого билета.
+    
+- `ticket_adult_quantity` - Количество взрослых билетов.
+    
+- `ticket_kid_price` - Стоимость детского билета.
+    
+- `ticket_kid_quantity` - Количество детских билетов.
+    
+- `barcode` - Уникальный штрихкод заказа.
+    
+- `user_id` - ID пользователя.
+    
+- `equal_price` - Общая стоимость заказа.
+    
+
+### ticket_types
+
+Таблица для хранения типов билетов.
+
+- `title` - Название типа (например, взрослый, детский).
+    
+
+### tickets
+
+Таблица для хранения билетов в заказе.
+
+- `order_id` - ID заказа.
+    
+- `ticket_type_id` - ID типа билета.
+    
+- `price` - Стоимость билета.
+    
+- `barcode` - Уникальный штрихкод билета.
